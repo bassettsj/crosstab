@@ -46,7 +46,12 @@
     <script>
         var crossTabApp = angular.module('crossTabApp', []);
 
-        crossTabApp.controller('crossTabCtrl', function ($scope) {
+        crossTabApp.controller('crossTabCtrl', function ($scope, $location) {
+            var org = $location.search()['org'];
+            var priority = $location.search()['priority'];
+
+            crosstab.init(org, priority);
+
             $scope.msg = null;
             $scope.messageTab = null;
             $scope.tabs = [];
