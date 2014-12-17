@@ -1,4 +1,4 @@
-    /*!
+/*!
  * crosstab JavaScript Library v0.2.0
  * https://github.com/tejacques/crosstab
  *
@@ -225,8 +225,7 @@ define(function(require,exports,module){
             // This is to force IE to behave properly
             return;
         }
-        var key = crosstab.group + '_' + util.keys.MESSAGE_KEY;
-        if (event.key === key) {
+        if (event.key === util.keys.MESSAGE_KEY) {
             var message = eventValue.data;
             // only handle if this message was meant for this tab.
             if (!message.destination || message.destination === crosstab.id) {
@@ -239,11 +238,10 @@ define(function(require,exports,module){
         var storageItem = {
             id: crosstab.id,
             data: data,
-            priority: crosstab.priority,
             timestamp: util.now()
         };
 
-        localStorage.setItem(crosstab.group + '_' + key, JSON.stringify(storageItem));
+        localStorage.setItem(key, JSON.stringify(storageItem));
     }
 
     function getLocalStorageItem(key) {
@@ -252,7 +250,7 @@ define(function(require,exports,module){
     }
 
     function getLocalStorageRaw(key) {
-        var json = localStorage ? localStorage.getItem(crosstab.group + '_' + key) : null;
+        var json = localStorage ? localStorage.getItem(key) : null;
         var item = json ? JSON.parse(json) : {};
         return item;
     }
@@ -289,31 +287,10 @@ define(function(require,exports,module){
         return getMaster().id === crosstab.id;
     }
 
-    function getMaxPriority() {
-        var maxPriority = null;
-
-        util.forEach(util.tabs, function (tab) {
-            if (!maxPriority || tab.priority > maxPriority) {
-                maxPriority = tab.priority;
-            }
-        });
-
-        return maxPriority;
-
-    }
     function masterTabElection() {
         var maxId = null;
-        var maxPriority = getMaxPriority();
-
-        var master = getMaster();
-
-        // no need to change master
-        if (master && master.priority === maxPriority) {
-            return;
-        }
-
         util.forEach(util.tabs, function (tab) {
-            if (tab.priority === maxPriority && (!maxId || tab.id < maxId)) {
+            if (!maxId || tab.id < maxId) {
                 maxId = tab.id;
             }
         });
@@ -357,7 +334,8 @@ define(function(require,exports,module){
         var tab = message.data;
         util.tabs[tab.id] = tab;
 
-        if (tab.id === crosstab.id) {
+        // If there is no master, hold an election
+        if (!getMaster()) {
             masterTabElection();
         }
 
@@ -446,7 +424,7 @@ define(function(require,exports,module){
         }
     };
 
-    crosstab.init = function(group, priority) {
+    crosstab.init = function(data) {
 
         crosstab.id = util.generateId();
         crosstab.supported = !!localStorage && window.addEventListener && !window.isMobile;
@@ -455,8 +433,7 @@ define(function(require,exports,module){
         crosstab.broadcastMaster = broadcastMaster;
         crosstab.on = util.events.on;
         crosstab.once = util.events.once;
-        crosstab.group = group || '';
-        crosstab.priority = parseInt(priority || 0, 10);
+        crosstab.data = data;
 
         util.tabs = getStoredTabs();
 
@@ -537,7 +514,7 @@ define(function(require,exports,module){
         var myTab = {
             id: crosstab.id,
             lastUpdated: now,
-            priority: crosstab.priority
+            data: crosstab.data
         };
 
         // broadcast tabUpdated event
