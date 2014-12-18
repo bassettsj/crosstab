@@ -495,8 +495,8 @@ define(function(require,exports,module){
     var TAB_KEEPALIVE = 3 * 1000;
     // 5 second timeout
     var TAB_TIMEOUT = 5 * 1000;
-    // 100 ms ping timeout
-    var PING_TIMEOUT = 100;
+    // 300 ms ping timeout
+    var PING_TIMEOUT = 300;
 
     function getStoredTabs() {
         var storedTabs = getLocalStorageItem(util.keys.TABS_KEY);
