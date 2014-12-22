@@ -4,8 +4,15 @@
  *
  * License: Apache 2.0 https://github.com/tejacques/crosstab/blob/master/LICENSE
  */
-; (function (define) {
-define(function(require,exports,module){
+(function (root, factory) {
+    if (typeof define === "function" && define.amd) {
+        // AMD
+        define('crosstab', factory);
+    } else {
+        // Browser globals, Window
+        root.crosstab = factory();
+    }
+}(this, function () {
 
     // --- Handle Support ---
     // See: http://detectmobilebrowsers.com/about
@@ -496,7 +503,7 @@ define(function(require,exports,module){
     // 5 second timeout
     var TAB_TIMEOUT = 5 * 1000;
     // ms ping timeout
-    var PING_TIMEOUT = 500;
+    var PING_TIMEOUT = 1000;
 
     function getStoredTabs() {
         var storedTabs = getLocalStorageItem(util.keys.TABS_KEY);
@@ -595,34 +602,7 @@ define(function(require,exports,module){
         }
     }
 
-    module.exports = crosstab;
+    return crosstab;
 
-/*!
- * UMD/AMD/Global context Module Loader wrapper
- * based off https://gist.github.com/wilsonpage/8598603
- *
- * This wrapper will try to use a module loader with the
- * following priority:
- *
- *  1.) AMD
- *  2.) CommonJS
- *  3.) Context Variable (window in the browser)
- */
-});})(typeof define == 'function' && define.amd ? define
-    : (function (name, context) {
-        'use strict';
-        return typeof module == 'object' ? function (define) {
-            define(require, exports, module);
-        }
-        : function (define) {
-            var module = {
-                exports: {}
-            };
-            var require = function (n) {
-                return context[n];
-            };
+}));
 
-            define(require, module.exports, module);
-            context[name] = module.exports;
-        };
-    })('crosstab', this));
