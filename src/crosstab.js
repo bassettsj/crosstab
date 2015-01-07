@@ -444,6 +444,28 @@
 
         util.tabs = getStoredTabs();
 
+        // --- Crosstab supported ---
+        // Check to see if the global supported key has been set.
+        if (!setupComplete && crosstab.supported) {
+        var supportedRaw = getLocalStorageRaw(util.keys.SUPPORTED_KEY);
+        var supported = supportedRaw.data;
+        if (supported === false || supported === true) {
+            // As long as it is explicitely set, use the value
+            crosstab.supported = supported;
+            util.events.emit('setupComplete');
+        }
+    }
+
+    // Check to see if the global frozen tab environment key has been set.
+    if (!setupComplete && crosstab.supported) {
+        var frozenTabsRaw = getLocalStorageRaw(util.keys.FROZEN_TAB_ENVIRONMENT);
+        var frozenTabs = frozenTabsRaw.data;
+        if (frozenTabs === true) {
+            frozenTabEnvironmentDetected();
+                util.events.emit('setupComplete');
+            }
+        }
+
         // --- Check if crosstab is supported ---
         if (!crosstab.supported) {
             crosstab.broadcast = notSupported;
@@ -467,28 +489,6 @@
         }
 
     };
-
-    // --- Crosstab supported ---
-    // Check to see if the global supported key has been set.
-    if (!setupComplete && crosstab.supported) {
-        var supportedRaw = getLocalStorageRaw(util.keys.SUPPORTED_KEY);
-        var supported = supportedRaw.data;
-        if (supported === false || supported === true) {
-            // As long as it is explicitely set, use the value
-            crosstab.supported = supported;
-            util.events.emit('setupComplete');
-        }
-    }
-
-    // Check to see if the global frozen tab environment key has been set.
-    if (!setupComplete && crosstab.supported) {
-        var frozenTabsRaw = getLocalStorageRaw(util.keys.FROZEN_TAB_ENVIRONMENT);
-        var frozenTabs = frozenTabsRaw.data;
-        if (frozenTabs === true) {
-            frozenTabEnvironmentDetected();
-            util.events.emit('setupComplete');
-        }
-    }
 
     function frozenTabEnvironmentDetected() {
         crosstab.supported = false;
