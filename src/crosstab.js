@@ -77,6 +77,7 @@
     };
 
     var setData = function(data) {
+        crosstab.data = data;
         var tab = {
             id: crosstab.id,
             data: data,
@@ -182,3 +183,4 @@
     return crosstab;
 
 }));
+
