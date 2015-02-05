@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Presence Demo</title>
+  <script src="../src/crosstab.js"></script>
+</head>
+<body>
+
+<script>
+
+
+	crosstab.init({});
+
+	setInterval(function() {
+		var tabs = crosstab.all();
+		console.log(tabs);
+	}, 1000)
+
+	//window.localStorage.removeItem('crosstab.FROZEN_TAB_ENVIRONMENT');
+	//window.localStorage.removeItem('crosstab.SUPPORTED');
+
+</script>
+
+</html>

@@ -70,10 +70,13 @@
     };
 
     var keepAlive = function() {
-        var tab = getLocalStorageItem(PREFIX + crosstab.id, {});
-        tab.timestamp = util.now();
+        var tab = {
+            id: crosstab.id,
+            data: crosstab.data,
+            timestamp: util.now()
+        };
         setLocalStorageItem(PREFIX + crosstab.id, tab);
-        garbageCollect();
+        refreshTabList();
     };
 
     var setData = function(data) {
@@ -139,20 +142,38 @@
         }
     };
 
-    var garbageCollect = function() {
+    var refreshTabList = function() {
         var tabs = getLocalStorageItem(TAB_LIST_STORAGE_NAME, []);
         var now = util.now();
         var tabs2Remove = [];
         var tabs2Keep = [];
+        var tabWasRemoved = true;
+
         for (var i = 0; i < tabs.length; ++i) {
             var tabId = tabs[i];
+
+            // Never remove this tab
+            if (tabId == crosstab.id) {
+                tabs2Keep.push(tabId);
+                tabWasRemoved = false;
+                continue;
+            }
+
             var tab = getLocalStorageItem(PREFIX + tabId);
+
+            // Remove if inactive
             if (!tab || tab.timestamp < (now - INACTIVITY_TIMEOUT) ) {
                 tabs2Remove.push(tabId);
             } else {
                 tabs2Keep.push(tabId);
             }
         }
+
+        // Add the tab again if it was removed
+        if (tabWasRemoved) {
+            addTab(crosstab.data);
+        }
+
         cleanTabs(tabs2Remove, tabs2Keep);
     };
 
