@@ -1,6 +1,6 @@
 {
   "name": "@upwork/crosstab",
-  "version": "1.0.0",
+  "version": "1.0.0-0",
   "source": "./src/crosstab.js",
   "main": "./dist/crosstab.js",
   "files": [
